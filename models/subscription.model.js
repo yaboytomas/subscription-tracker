@@ -11,7 +11,7 @@ const subscriptionSchema = new mongoose.Schema({
     },
 
     price: {
-        type: Number,
+        type: String,
         required: [true, 'Subscription price is requiered.'],
         min: [0, "Price must be greater than 0"],
     },
@@ -49,29 +49,26 @@ const subscriptionSchema = new mongoose.Schema({
     // valdition for start date before entered
     startDate: {
         type: Date,
-        required: [true, 'Subscription start date is requiered.'],
+        required: [true, 'Subscription start date is required.'],
         default: Date.now,
         validate: {
             validator: function(v) {
-                return v >= Date.now();
+                return v < Date.now();
             },
             message: 'Start date must be in the past.'
         }
     },
-
-    // valdition for renewal date before entered
     renewalDate: {
         type: Date,
-        required: [true, 'Subscription renewal date is requiered.'],
+        required: [true, 'Subscription renewal date is required.'],
         default: Date.now,
         validate: {
             validator: function(v) {
-                return v > this.startDate();
+                return v > this.startDate;
             },
             message: 'Renewal date must be after the start date.'
         }
     },
-
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

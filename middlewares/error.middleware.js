@@ -1,4 +1,4 @@
-
+import ErrorResponse from '../middlewares/errorResponse.js';
 
 const errorMiddleware = (err, req, res, next) => {
     try {
