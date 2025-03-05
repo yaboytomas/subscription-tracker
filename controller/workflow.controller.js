@@ -18,27 +18,26 @@ export const sendReminders = serve (async (context) => {
     
     const renewalDate = dayjs(subscription.renewalDate);
 
-    if (renewalDate.diff(dayjs())) {
-        console.log(`Renewal date has passed for subscription, ${subscriptionId}, Stopping workflowRouter.`);
+    if (renewalDate.isBefore(dayjs())) {
+        console.log(`Renewal date has passed for subscription, ${subscriptionId}, Stopping workflow.`);
         return;
     }
     
-    for(const dayBefore of REMINDERS) {
-        const reminderDate = renewalDate.subtract(dayBefore, 'days');
+    for(const daysBefore of REMINDERS) {
+        const reminderDate = renewalDate.subtract(daysBefore, 'days');
 
         if (reminderDate.isAfter(dayjs())) {
-            await sleepUntilReminder(context, `reminder-${subscriptionId}-${dayBefore}`, reminderDate);
+            await sleepUntilReminder(context, `Reminder ${daysBefore} days before`, reminderDate);
         }
         
-        
-        await triggerReminder(context, `reminder-${subscriptionId}-${dayBefore}`);
+        await triggerReminder(context, `Reminder ${daysBefore} dats before`);
     }   
 
 });
 
 const fetchSubscription = async (context, subscriptionId) => {
 
-    return await context.run('get subscription', () => {
+    return await context.run('get subscription', async () => {
 
         return Subscription.findById(subscriptionId).populate('user','name email');       
     });
