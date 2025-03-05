@@ -5,7 +5,6 @@ import User from '../models/user.model.js';
 // someone is making a request to the server, we need to check if the user is authorized to make that request
 const authorize = async (req, res, next) => {
     try {
-        
         let token;
 
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
@@ -13,23 +12,24 @@ const authorize = async (req, res, next) => {
         }
 
         if (!token) {
-            res.status(401).json({ success: false, message: 'Unathorized' });
-        }   
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
 
         const decoded = jwt.verify(token, JWT_SECRET);
 
         const user = await User.findById(decoded.userId);
         if (!user) {
-            res.status(404).json({ success: false, message: 'User not found, not authorized.' });
+            return res.status(404).json({ success: false, message: 'User not found, not authorized.' });
         }
 
         req.user = user;
 
         next();
-
     } catch (error) {
-        res.status(401).json({ success: false, message: 'Unathorized', error: error.message });
-        next(error);
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ success: false, message: 'Token expired' });
+        }
+        res.status(401).json({ success: false, message: 'Unauthorized', error: error.message });
     }
 }
 
