@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const subscriptionSchema = new mongoose.Schema({
     
     name:{
@@ -28,7 +29,7 @@ const subscriptionSchema = new mongoose.Schema({
 
     },
 
-    catergory: {
+    category: {
         type: String,
         enum: ['news', 'sports', 'entertainment', 'technology', 'politics', 'finance', 'health', 'fashion', 'food', 'travel', 'lifestyle', 'other'],
         requierd: [true, 'Subscription category is requiered.'],
